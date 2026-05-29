@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { itemApi, productApi, authApi } from "@/lib/api";
+import Navbar from "@/components/Navbar";
 
 interface Item {
   id: number;
@@ -24,23 +24,31 @@ interface Product {
   sizeStep: number;
 }
 
+const fitLabel = (fit: string) =>
+  fit === "TIGHT" ? "타이트" : fit === "PERFECT" ? "딱 맞음" : "여유있음";
+
+const fitColor = (fit: string) =>
+  fit === "TIGHT"
+    ? "text-orange-400 bg-orange-400/10 border-orange-400/20"
+    : fit === "PERFECT"
+    ? "text-green-400 bg-green-400/10 border-green-400/20"
+    : "text-blue-400 bg-blue-400/10 border-blue-400/20";
+
 export default function ItemsPage() {
   const router = useRouter();
   const [items, setItems] = useState<Item[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [nickname, setNickname] = useState("");
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const [selectedFit, setSelectedFit] = useState("PERFECT");
   const [loading, setLoading] = useState(true);
+  const [adding, setAdding] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-      return;
-    }
+    if (!token) { router.push("/login"); return; }
     fetchData();
   }, [router]);
 
@@ -55,8 +63,7 @@ export default function ItemsPage() {
       setProducts(productsData);
       setNickname(userInfo.nickname);
     } catch {
-      localStorage.removeItem("token");
-          router.push("/login");
+      router.push("/login");
     } finally {
       setLoading(false);
     }
@@ -64,14 +71,17 @@ export default function ItemsPage() {
 
   const handleAddItem = async () => {
     if (!selectedProductId || !selectedSize) return;
+    setAdding(true);
     try {
       await itemApi.addItem(selectedProductId, selectedSize, selectedFit);
-      setShowAddForm(false);
+      setShowAddModal(false);
       setSelectedProductId(null);
       setSelectedSize(null);
       fetchData();
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : "오류가 발생했습니다.");
+    } finally {
+      setAdding(false);
     }
   };
 
@@ -85,11 +95,6 @@ export default function ItemsPage() {
     }
   };
 
-  const handleLogout = () => {
-    authApi.logout();
-    router.push("/login");
-  };
-
   const selectedProduct = products.find((p) => p.id === selectedProductId);
   const sizeOptions = selectedProduct
     ? Array.from(
@@ -98,114 +103,192 @@ export default function ItemsPage() {
       )
     : [];
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center">로딩 중...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-bg flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b px-6 py-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold">FitLog</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-gray-600 text-sm">{nickname}</span>
-          <Link href="/recommendations" className="text-sm text-blue-600 hover:underline">
-            추천 받기
-          </Link>
-          <button onClick={handleLogout} className="text-sm text-gray-500 hover:text-black">
-            로그아웃
-          </button>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-bg">
+      <Navbar nickname={nickname} />
 
-      <div className="max-w-2xl mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">내 신발장</h2>
-          <button
-            onClick={() => setShowAddForm(!showAddForm)}
-            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 text-sm"
-          >
-            + 신발 추가
-          </button>
-        </div>
-
-        {showAddForm && (
-          <div className="bg-white rounded-xl p-6 shadow mb-6">
-            <h3 className="font-semibold mb-4">신발 추가</h3>
-            <div className="flex flex-col gap-3">
-              <select
-                value={selectedProductId ?? ""}
-                onChange={(e) => {
-                  setSelectedProductId(Number(e.target.value));
-                  setSelectedSize(null);
-                }}
-                className="border rounded-lg px-4 py-2"
-              >
-                <option value="">제품 선택</option>
-                {products.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.brand} {p.name}
-                  </option>
-                ))}
-              </select>
-
-              {selectedProductId && (
-                <select
-                  value={selectedSize ?? ""}
-                  onChange={(e) => setSelectedSize(Number(e.target.value))}
-                  className="border rounded-lg px-4 py-2"
-                >
-                  <option value="">사이즈 선택</option>
-                  {sizeOptions.map((s) => (
-                    <option key={s} value={s}>{s}mm</option>
-                  ))}
-                </select>
-              )}
-
-              <select
-                value={selectedFit}
-                onChange={(e) => setSelectedFit(e.target.value)}
-                className="border rounded-lg px-4 py-2"
-              >
-                <option value="TIGHT">타이트</option>
-                <option value="PERFECT">딱 맞음</option>
-                <option value="LOOSE">여유있음</option>
-              </select>
-
-              <button
-                onClick={handleAddItem}
-                disabled={!selectedProductId || !selectedSize}
-                className="bg-black text-white py-2 rounded-lg hover:bg-gray-800 disabled:opacity-50"
-              >
-                추가
-              </button>
-            </div>
+      <div className="max-w-6xl mx-auto px-6 pt-28 pb-16">
+        {/* 헤더 */}
+        <div className="flex items-end justify-between mb-10">
+          <div>
+            <p className="text-text-secondary text-sm mb-1">@{nickname}</p>
+            <h1 className="text-4xl font-black text-text-primary">나의 신발장</h1>
+            <p className="text-text-secondary mt-2">{items.length}켤레 보유 중</p>
           </div>
-        )}
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 px-5 py-3 bg-primary hover:bg-primary/90 text-white rounded-2xl font-medium transition-all hover:scale-105 active:scale-95"
+          >
+            <span className="text-lg leading-none">+</span>
+            신발 추가
+          </button>
+        </div>
 
+        {/* 신발 그리드 */}
         {items.length === 0 ? (
-          <div className="bg-white rounded-xl p-12 shadow text-center text-gray-400">
-            등록된 신발이 없어요. 신발을 추가해보세요!
+          <div className="flex flex-col items-center justify-center py-32 rounded-3xl border border-dashed border-border">
+            <div className="text-5xl mb-4">👟</div>
+            <p className="text-text-primary font-semibold text-lg mb-2">신발장이 비어있어요</p>
+            <p className="text-text-secondary text-sm mb-6">신발을 등록하면 더 정확한 추천을 받을 수 있어요</p>
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-2xl font-medium transition-all"
+            >
+              첫 신발 추가하기
+            </button>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {items.map((item) => (
-              <div key={item.id} className="bg-white rounded-xl px-6 py-4 shadow flex justify-between items-center">
-                <div>
-                  <p className="font-medium">{item.productName}</p>
-                  <p className="text-sm text-gray-500">{item.brand} · {item.size}mm · {
-                    item.fit === "TIGHT" ? "타이트" :
-                    item.fit === "PERFECT" ? "딱 맞음" : "여유있음"
-                  }</p>
+              <div
+                key={item.id}
+                className="group p-6 rounded-3xl bg-surface border border-border hover:border-primary/30 transition-all hover:-translate-y-1"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="w-12 h-12 rounded-2xl bg-surface-2 border border-border flex items-center justify-center text-xl">
+                    👟
+                  </div>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="opacity-0 group-hover:opacity-100 w-8 h-8 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 flex items-center justify-center transition-all"
+                  >
+                    <span className="text-red-400 text-sm">×</span>
+                  </button>
                 </div>
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  className="text-sm text-red-400 hover:text-red-600"
-                >
-                  삭제
-                </button>
+
+                <p className="text-text-secondary text-xs font-medium uppercase tracking-wider mb-1">
+                  {item.brand}
+                </p>
+                <p className="text-text-primary font-semibold leading-tight mb-4 line-clamp-2">
+                  {item.productName}
+                </p>
+
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1.5 rounded-xl bg-surface-2 border border-border text-text-primary text-sm font-bold">
+                    {item.size}mm
+                  </span>
+                  <span className={`px-3 py-1.5 rounded-xl border text-xs font-medium ${fitColor(item.fit)}`}>
+                    {fitLabel(item.fit)}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
-    </main>
+
+      {/* 추가 모달 */}
+      {showAddModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          onClick={(e) => e.target === e.currentTarget && setShowAddModal(false)}
+        >
+          <div className="w-full max-w-md bg-surface border border-border rounded-3xl p-6 animate-fade-up">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-text-primary">신발 추가</h3>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="w-8 h-8 rounded-xl bg-surface-2 border border-border flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-text-secondary uppercase tracking-wider">
+                  제품 선택
+                </label>
+                <select
+                  value={selectedProductId ?? ""}
+                  onChange={(e) => {
+                    setSelectedProductId(Number(e.target.value));
+                    setSelectedSize(null);
+                  }}
+                  className="w-full bg-surface-2 border border-border rounded-2xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary transition-colors text-sm"
+                >
+                  <option value="">제품을 선택하세요</option>
+                  {products.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.brand} {p.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {selectedProductId && (
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-text-secondary uppercase tracking-wider">
+                    착용 사이즈
+                  </label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {sizeOptions.map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => setSelectedSize(s)}
+                        className={`py-2.5 rounded-xl border text-sm font-medium transition-all ${
+                          selectedSize === s
+                            ? "bg-primary border-primary text-white"
+                            : "bg-surface-2 border-border text-text-secondary hover:border-primary/50 hover:text-text-primary"
+                        }`}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-text-secondary uppercase tracking-wider">
+                  핏감
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { value: "TIGHT", label: "타이트", emoji: "😬" },
+                    { value: "PERFECT", label: "딱 맞음", emoji: "😊" },
+                    { value: "LOOSE", label: "여유있음", emoji: "😌" },
+                  ].map((fit) => (
+                    <button
+                      key={fit.value}
+                      onClick={() => setSelectedFit(fit.value)}
+                      className={`py-3 rounded-xl border text-sm font-medium transition-all flex flex-col items-center gap-1 ${
+                        selectedFit === fit.value
+                          ? "bg-primary border-primary text-white"
+                          : "bg-surface-2 border-border text-text-secondary hover:border-primary/50"
+                      }`}
+                    >
+                      <span>{fit.emoji}</span>
+                      <span className="text-xs">{fit.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={handleAddItem}
+                disabled={!selectedProductId || !selectedSize || adding}
+                className="w-full py-4 bg-primary hover:bg-primary/90 disabled:opacity-40 text-white rounded-2xl font-semibold transition-all"
+              >
+                {adding ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    추가 중...
+                  </span>
+                ) : "신발장에 추가"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

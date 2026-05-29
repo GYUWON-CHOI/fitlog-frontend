@@ -1,26 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  --color-bg: #0F1115;
+  --color-surface: #181A20;
+  --color-surface-2: #1E2028;
+  --color-primary: #7C5CFF;
+  --color-accent: #9D8BFF;
+  --color-text-primary: #F5F7FA;
+  --color-text-secondary: #9CA3AF;
+  --color-border: #2A2D35;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-family-sans: "Inter", system-ui, sans-serif;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --animate-fade-up: fadeUp 0.5s ease-out;
+  --animate-fade-in: fadeIn 0.3s ease-out;
+  --animate-shimmer: shimmer 2s infinite;
+
+  @keyframes fadeUp {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+* {
+  box-sizing: border-box;
 }
+
+body {
+  background-color: #0F1115;
+  color: #F5F7FA;
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #181A20; }
+::-webkit-scrollbar-thumb { background: #2A2D35; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #7C5CFF; }
+::selection { background: #7C5CFF; color: #fff; }
