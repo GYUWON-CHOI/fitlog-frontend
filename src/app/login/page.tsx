@@ -18,7 +18,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await authApi.login(email, password);
-      router.push("/items");
+      window.location.href = "/home";
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "로그인 실패");
     } finally {
@@ -55,7 +55,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="relative z-10 flex gap-4">
+        <div className="relative z-10 flex gap-4 flex-wrap">
           {["Nike", "Jordan", "Adidas", "New Balance", "Vans"].map((brand) => (
             <span
               key={brand}

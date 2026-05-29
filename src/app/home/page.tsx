@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { itemApi, authApi } from "@/lib/api";
 import Navbar from "@/components/Navbar";
 
@@ -13,6 +14,7 @@ interface Item {
   brand: string;
   size: number;
   fit: string;
+  thumbnailUrl: string;
 }
 
 const fitLabel = (fit: string) =>
@@ -66,14 +68,11 @@ export default function HomePage() {
     <div className="min-h-screen bg-bg">
       <Navbar nickname={nickname} />
 
-      {/* 배경 그라디언트 */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary/5 rounded-full blur-[120px]" />
       </div>
 
       <div className="relative max-w-6xl mx-auto px-6 pt-28 pb-16">
-
-        {/* 인사 */}
         <div className="mb-12">
           <p className="text-text-secondary text-sm mb-2">안녕하세요 👋</p>
           <h1 className="text-4xl font-black text-text-primary">
@@ -81,7 +80,6 @@ export default function HomePage() {
           </h1>
         </div>
 
-        {/* 상단 스탯 카드 */}
         <div className="grid grid-cols-3 gap-4 mb-8">
           <div className="p-6 rounded-3xl bg-surface border border-border">
             <p className="text-text-secondary text-xs uppercase tracking-wider mb-3">보유 신발</p>
@@ -108,7 +106,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* 퀵 액션 */}
         <div className="grid grid-cols-2 gap-4 mb-8">
           <Link
             href="/recommendations"
@@ -139,7 +136,6 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* 최근 신발 */}
         <div>
           <div className="flex items-center justify-between mb-4">
             <p className="text-text-primary font-bold">최근 등록 신발</p>
@@ -165,8 +161,18 @@ export default function HomePage() {
                   key={item.id}
                   className="p-5 rounded-3xl bg-surface border border-border hover:border-primary/30 transition-all hover:-translate-y-1"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-surface-2 border border-border flex items-center justify-center text-lg mb-4">
-                    👟
+                  <div className="w-full h-32 rounded-2xl bg-surface-2 border border-border overflow-hidden flex items-center justify-center mb-4">
+                    {item.thumbnailUrl ? (
+                      <Image
+                        src={item.thumbnailUrl}
+                        alt={item.productName}
+                        width={128}
+                        height={128}
+                        className="w-full h-full object-contain p-2"
+                      />
+                    ) : (
+                      <span className="text-3xl">👟</span>
+                    )}
                   </div>
                   <p className="text-text-secondary text-xs mb-1">{item.brand}</p>
                   <p className="text-text-primary font-semibold text-sm leading-tight mb-3 line-clamp-2">

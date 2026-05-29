@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { itemApi, productApi, authApi } from "@/lib/api";
 import Navbar from "@/components/Navbar";
 
@@ -12,6 +13,7 @@ interface Item {
   brand: string;
   size: number;
   fit: string;
+  thumbnailUrl: string;
 }
 
 interface Product {
@@ -22,6 +24,7 @@ interface Product {
   sizeMin: number;
   sizeMax: number;
   sizeStep: number;
+  thumbnailUrl: string;
 }
 
 const fitLabel = (fit: string) =>
@@ -116,7 +119,6 @@ export default function ItemsPage() {
       <Navbar nickname={nickname} />
 
       <div className="max-w-6xl mx-auto px-6 pt-28 pb-16">
-        {/* 헤더 */}
         <div className="flex items-end justify-between mb-10">
           <div>
             <p className="text-text-secondary text-sm mb-1">@{nickname}</p>
@@ -132,7 +134,6 @@ export default function ItemsPage() {
           </button>
         </div>
 
-        {/* 신발 그리드 */}
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 rounded-3xl border border-dashed border-border">
             <div className="text-5xl mb-4">👟</div>
@@ -153,8 +154,18 @@ export default function ItemsPage() {
                 className="group p-6 rounded-3xl bg-surface border border-border hover:border-primary/30 transition-all hover:-translate-y-1"
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-2xl bg-surface-2 border border-border flex items-center justify-center text-xl">
-                    👟
+                  <div className="w-16 h-16 rounded-2xl bg-surface-2 border border-border overflow-hidden flex items-center justify-center">
+                    {item.thumbnailUrl ? (
+                      <Image
+                        src={item.thumbnailUrl}
+                        alt={item.productName}
+                        width={64}
+                        height={64}
+                        className="w-full h-full object-contain p-1"
+                      />
+                    ) : (
+                      <span className="text-2xl">👟</span>
+                    )}
                   </div>
                   <button
                     onClick={() => handleDelete(item.id)}
@@ -185,7 +196,6 @@ export default function ItemsPage() {
         )}
       </div>
 
-      {/* 추가 모달 */}
       {showAddModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
