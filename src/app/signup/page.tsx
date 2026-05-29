@@ -28,106 +28,78 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg flex">
-      <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-bg to-bg" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[100px]" />
-
-        <div className="relative z-10 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
-            <span className="text-white text-sm font-bold">F</span>
+    <div className="min-h-screen flex">
+      <div className="hidden lg:flex flex-col justify-between w-1/2 p-14 bg-gray-900">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center">
+            <span className="text-gray-900 text-xs font-black">F</span>
           </div>
-          <span className="text-text-primary font-bold text-xl">FitLog</span>
+          <span className="text-white font-bold">FitLog</span>
         </div>
 
-        <div className="relative z-10">
-          <h2 className="text-5xl font-black text-text-primary leading-tight mb-6">
-            신발 쇼핑의
-            <br />
-            <span className="text-accent">새로운 기준</span>
+        <div>
+          <p className="text-gray-500 text-xs uppercase tracking-widest mb-5">Join FitLog</p>
+          <h2 className="font-black text-white leading-none mb-6">
+            <span className="block text-5xl">YOUR</span>
+            <span className="block text-5xl">SNEAKER</span>
+            <span className="block text-5xl">PROFILE.</span>
           </h2>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {[
-              "보유 신발 등록으로 나만의 핏 프로필 생성",
-              "유사 유저 매칭으로 정확한 사이즈 추천",
-              "데이터 기반 추천으로 반품 걱정 제로",
+              "보유 신발로 나만의 핏 프로필 생성",
+              "유사 유저 자동 매칭",
+              "데이터 기반 정확한 사이즈 추천",
             ].map((item) => (
-              <div key={item} className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                </div>
-                <span className="text-text-secondary text-sm">{item}</span>
+              <div key={item} className="flex items-center gap-3">
+                <div className="w-1 h-1 rounded-full bg-gray-500 flex-shrink-0" />
+                <span className="text-gray-400 text-sm">{item}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="relative z-10 p-6 rounded-3xl bg-surface/50 border border-border backdrop-blur-sm">
-          <p className="text-text-secondary text-sm italic mb-3">
-            "사이즈 때문에 반품하는 일이 없어졌어요."
-          </p>
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-primary/20 border border-primary/30" />
+        <div className="p-5 rounded-2xl bg-gray-800 border border-gray-700">
+          <p className="text-gray-400 text-sm italic mb-3">"사이즈 때문에 반품하는 일이 없어졌어요."</p>
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center">
+              <span className="text-gray-400 text-xs font-bold">S</span>
+            </div>
             <div>
-              <div className="text-text-primary text-sm font-medium">스니커헤드 유저</div>
-              <div className="text-text-secondary text-xs">FitLog 사용자</div>
+              <p className="text-gray-300 text-xs font-semibold">스니커헤드</p>
+              <p className="text-gray-600 text-xs">FitLog 사용자</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          <div className="mb-10">
-            <h1 className="text-3xl font-bold text-text-primary mb-2">계정 만들기</h1>
-            <p className="text-text-secondary">무료로 시작하세요</p>
+      <div className="flex-1 flex items-center justify-center p-10 bg-white">
+        <div className="w-full max-w-sm">
+          <div className="mb-8">
+            <h1 className="text-2xl font-black text-gray-900 mb-1.5">계정 만들기</h1>
+            <p className="text-gray-400 text-sm">무료로 시작하세요</p>
           </div>
 
           <form onSubmit={handleSignup} className="space-y-4">
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-text-secondary uppercase tracking-wider">
-                닉네임
-              </label>
-              <input
-                type="text"
-                value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
-                placeholder="스니커헤드"
-                className="w-full bg-surface border border-border rounded-2xl px-4 py-3.5 text-text-primary placeholder-text-secondary/50 focus:outline-none focus:border-primary transition-colors text-sm"
-                required
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-text-secondary uppercase tracking-wider">
-                이메일
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="hello@example.com"
-                className="w-full bg-surface border border-border rounded-2xl px-4 py-3.5 text-text-primary placeholder-text-secondary/50 focus:outline-none focus:border-primary transition-colors text-sm"
-                required
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-text-secondary uppercase tracking-wider">
-                비밀번호
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-surface border border-border rounded-2xl px-4 py-3.5 text-text-primary placeholder-text-secondary/50 focus:outline-none focus:border-primary transition-colors text-sm"
-                required
-              />
-            </div>
+            {[
+              { key: "nickname", label: "닉네임", type: "text", placeholder: "스니커헤드", value: nickname, setter: setNickname },
+              { key: "email", label: "이메일", type: "email", placeholder: "hello@example.com", value: email, setter: setEmail },
+              { key: "password", label: "비밀번호", type: "password", placeholder: "••••••••", value: password, setter: setPassword },
+            ].map(({ key, label, type, placeholder, value, setter }) => (
+              <div key={key}>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">{label}</label>
+                <input
+                  type={type}
+                  value={value}
+                  onChange={(e) => setter(e.target.value)}
+                  placeholder={placeholder}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-300 focus:outline-none focus:border-gray-900 focus:bg-white transition-all text-sm"
+                  required
+                />
+              </div>
+            ))}
 
             {error && (
-              <div className="px-4 py-3 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+              <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-red-500 text-xs">
                 {error}
               </div>
             )}
@@ -135,22 +107,20 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white rounded-2xl font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] mt-2"
+              className="w-full py-3.5 bg-gray-900 hover:bg-gray-700 disabled:opacity-40 text-white rounded-xl font-bold text-sm transition-colors mt-2"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  처리 중...
+                  <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                  처리 중
                 </span>
-              ) : "회원가입"}
+              ) : "가입하기 →"}
             </button>
           </form>
 
-          <p className="text-center mt-6 text-sm text-text-secondary">
+          <p className="text-center mt-6 text-xs text-gray-400">
             이미 계정이 있으신가요?{" "}
-            <Link href="/login" className="text-primary hover:text-accent transition-colors font-medium">
-              로그인
-            </Link>
+            <Link href="/login" className="text-gray-900 font-semibold hover:underline">로그인</Link>
           </p>
         </div>
       </div>
