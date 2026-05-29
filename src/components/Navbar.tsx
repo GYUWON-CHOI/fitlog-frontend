@@ -20,7 +20,7 @@ export default function Navbar({ nickname }: NavbarProps) {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-bg/80 backdrop-blur-xl">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/home" className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
             <span className="text-white text-xs font-bold">F</span>
           </div>
@@ -28,6 +28,14 @@ export default function Navbar({ nickname }: NavbarProps) {
         </Link>
 
         <div className="flex items-center gap-6">
+          <Link
+            href="/home"
+            className={`text-sm font-medium transition-colors ${
+              pathname === "/home" ? "text-text-primary" : "text-text-secondary hover:text-text-primary"
+            }`}
+          >
+            홈
+          </Link>
           <Link
             href="/items"
             className={`text-sm font-medium transition-colors ${
