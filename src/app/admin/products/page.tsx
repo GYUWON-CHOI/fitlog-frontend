@@ -32,6 +32,7 @@ export default function AdminProductsPage() {
     sizeMax: 300,
     sizeStep: 5,
     thumbnailUrl: "",
+    modelNumber: "",
   });
 
   useEffect(() => {
@@ -63,7 +64,7 @@ export default function AdminProductsPage() {
       const data = await res.json();
       if (!data.success) throw new Error(data.message);
       setShowForm(false);
-      setForm({ name: "", brand: "", category: "SHOES", sizeMin: 220, sizeMax: 300, sizeStep: 5, thumbnailUrl: "" });
+      setForm({ name: "", brand: "", category: "SHOES", sizeMin: 220, sizeMax: 300, sizeStep: 5, thumbnailUrl: "", modelNumber: "" });
       fetchProducts();
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : "오류가 발생했습니다.");
@@ -167,6 +168,7 @@ export default function AdminProductsPage() {
                 { key: "brand", label: "브랜드", placeholder: "Nike" },
                 { key: "name", label: "제품명", placeholder: "에어포스 1 로우" },
                 { key: "category", label: "카테고리", placeholder: "SHOES" },
+                { key: "modelNumber", label: "모델번호", placeholder: "315122-111" },
                 { key: "thumbnailUrl", label: "썸네일 URL", placeholder: "https://..." },
               ].map(({ key, label, placeholder }) => (
                 <div key={key} className="space-y-1">
